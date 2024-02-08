@@ -1,7 +1,9 @@
 // ignore_for_file: prefer_const_constructors, sized_box_for_whitespace
 
+import 'package:advanced_exam/View/detail_page.dart';
 import 'package:advanced_exam/util.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 
 import '../Modal/api_helper.dart';
 
@@ -35,16 +37,50 @@ class _MyHomePageState extends State<MyHomePage> {
             itemCount: productList.length,
             itemBuilder: (context, index) {
               var sample = productList[index];
-              return Container(
-                height: deviceHeight / 5,
-                child: Column(
-                  children: [
-                    Text("${sample.title}"),
-                    Image.network(sample.image!),
-                  ],
-                )
+              return InkWell(
+                onTap: (){
+                  Navigator.push(context, MaterialPageRoute(builder: (context) {
+                    return DetailsPage(
+                      title: sample.title,
+                      category: "${sample.category}",
+                      description: sample.description,
+                      image: sample.image,
+                      price: sample.price,
+                      rating: double.parse("${sample.rating!.rate}"),
+                    );
+                  },));
+                },
+                child: Container(
+                  padding: EdgeInsets.all(8),
+                  margin: EdgeInsets.all(8),
+                  color: Colors.grey,
+                    height: deviceHeight / 1,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Image.network(
+                          sample.image!,
+                          height: 100,
+                          width: 100,
+                        ),
+                        Text("${sample.title}",maxLines: 2,overflow: TextOverflow.ellipsis),
+                        Text("\$${sample.price}"),
+                        RatingBarIndicator(
+                          rating: double.parse("${sample.rating!.rate}"),
+                          itemBuilder: (context, index) => Icon(
+                            Icons.star,
+                            color: Colors.amber,
+                          ),
+                          itemCount: 5,
+                          itemSize: 11.0,
+                          direction: Axis.horizontal,
+                        ),
+                      ],
+                    )),
               );
-            }, gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
+            },
+            gridDelegate:
+                SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
           ),
         ));
   }
