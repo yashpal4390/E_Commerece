@@ -1,12 +1,17 @@
 // ignore_for_file: prefer_const_constructors
 
 import 'package:advanced_exam/Controller/Provider/product_provider.dart';
+import 'package:advanced_exam/Modal/api_helper.dart';
+import 'package:advanced_exam/View/splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'View/home_page.dart';
-
-void main() {
+late SharedPreferences prefs;
+void main() async{
+  WidgetsFlutterBinding.ensureInitialized();
+  prefs = await SharedPreferences.getInstance();
   runApp(const MyApp());
 }
 
@@ -20,6 +25,9 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(
           create: (context) => ProductProvider(),
         ),
+        ChangeNotifierProvider(
+          create: (context) => ApiHelper(),
+        ),
       ],
       child: MaterialApp(
         title: 'Flutter Demo',
@@ -28,7 +36,7 @@ class MyApp extends StatelessWidget {
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
           useMaterial3: true,
         ),
-        home: MyHomePage(),
+        home: SplashScreen(),
       ),
     );
   }
