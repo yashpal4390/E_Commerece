@@ -6,6 +6,7 @@
 - Display all products as a Grid & List in HomePage
 - Show category-wise products  in HomePage
 - display a tapped product in DetailsPage
+- Store a product to cart list 
 - Cart List Saved Locally using shared preferences 
 # Project Requirements:
 - Knowledge of programming languages such as Dart and JavaScript.
