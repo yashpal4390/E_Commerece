@@ -32,10 +32,20 @@ class DetailsPage extends StatefulWidget {
 class _DetailsPageState extends State<DetailsPage> {
   @override
   Widget build(BuildContext context) {
+    var pp = Provider.of<ProductProvider>(context, listen: false);
     return Scaffold(
       appBar: AppBar(
         title: Text("Product Details"),
         centerTitle: true,
+        actions: [
+          IconButton(
+              onPressed: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) {
+                  return CartPage();
+                }));
+              },
+              icon: Icon(Icons.shopping_cart))
+        ],
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -105,68 +115,90 @@ class _DetailsPageState extends State<DetailsPage> {
                           color: Colors.deepOrange,
                         ),
                       ),
-                      ElevatedButton(
-                        onPressed: () {
-                          Product product = Product(
-                            quantity: 1,
-                            title: widget.title,
-                            price: widget.price,
-                            image: widget.image,
-                          );
-                          bool alreadyInCart = Provider.of<ProductProvider>(
-                                  context,
-                                  listen: false)
-                              .cartList
-                              .any((item) => item.title == product.title);
-                          if (alreadyInCart) {
-                            print("Item is already in the cart");
-                            final snackBar = SnackBar(
-                              content: Text('Item is already in the cart'),
-                              duration: Duration(seconds: 2),
-                              // Adjust the duration as needed
-                              action: SnackBarAction(
-                                label: 'Close',
-                                onPressed: () {},
-                              ),
-                            );
+                      Consumer<ProductProvider>(
+                        builder: (BuildContext context, ProductProvider value,
+                            Widget? child) {
+                          return ElevatedButton(
+                            onPressed: () {
+                              Product product = Product(
+                                quantity: value.quantity,
+                                title: widget.title,
+                                price: widget.price,
+                                image: widget.image,
+                              );
 
-                            ScaffoldMessenger.of(context)
-                                .showSnackBar(snackBar);
-                          } else {
-                            print(product.toJson());
-                            var pp = Provider.of<ProductProvider>(context,
-                                listen: false);
-                            pp.cartList.add(product);
-                            Provider.of<ProductProvider>(context, listen: false)
-                                .saveData();
-                            final snackBar = SnackBar(
-                              content: Text('Item Added in the cart'),
-                              duration: Duration(seconds: 2),
-                              action: SnackBarAction(
-                                label: 'View Cart',
-                                onPressed: () {
-                                  Navigator.push(context,
-                                      MaterialPageRoute(builder: (context) {
-                                    return CartPage();
-                                  }));
-                                },
-                              ),
-                            );
-                            ScaffoldMessenger.of(context)
-                                .showSnackBar(snackBar);
-                            print("Item added to cart");
-                          }
-                          var pp = Provider.of<ProductProvider>(context,
-                              listen: false);
-                          print("${pp.cartList.length}");
+                              bool alreadyInCart = Provider.of<ProductProvider>(
+                                context,
+                                listen: false,
+                              )
+                                  .cartList
+                                  .any((item) => item.title == product.title);
+                              if (alreadyInCart) {
+                                Provider.of<ProductProvider>(context,
+                                        listen: false)
+                                    .cartList
+                                    .where(
+                                        (item) => item.title == product.title)
+                                    .forEach((item) => item.quantity =
+                                        (item.quantity ?? 0) +
+                                            1); // Increment quantity
+                                Provider.of<ProductProvider>(context,
+                                        listen: false)
+                                    .saveData();
+                                Navigator.push(context,
+                                    MaterialPageRoute(builder: (context) {
+                                  return CartPage();
+                                }));
+                                print("Item quantity incremented in the cart");
+                                final snackBar = SnackBar(
+                                  content: Text(
+                                      'Item quantity incremented in the cart'),
+                                  duration: Duration(seconds: 2),
+                                  action: SnackBarAction(
+                                    label: 'Close',
+                                    onPressed: () {},
+                                  ),
+                                );
+                                ScaffoldMessenger.of(context)
+                                    .showSnackBar(snackBar);
+                              } else {
+                                print(product.toJson());
+                                var pp = Provider.of<ProductProvider>(context,
+                                    listen: false);
+                                pp.cartList.add(product);
+                                Provider.of<ProductProvider>(context,
+                                        listen: false)
+                                    .saveData();
+                                final snackBar = SnackBar(
+                                  content: Text('Item Added in the cart'),
+                                  duration: Duration(seconds: 2),
+                                  action: SnackBarAction(
+                                    label: 'View Cart',
+                                    onPressed: () {
+                                      Navigator.push(context,
+                                          MaterialPageRoute(builder: (context) {
+                                        return CartPage();
+                                      }));
+                                    },
+                                  ),
+                                );
+                                ScaffoldMessenger.of(context)
+                                    .showSnackBar(snackBar);
+                                print("Item added to cart");
+                              }
+                              var pp = Provider.of<ProductProvider>(context,
+                                  listen: false);
+                              print("${pp.cartList.length}");
+                            },
+                            style: ElevatedButton.styleFrom(
+                              primary: Colors.deepOrangeAccent,
+                            ),
+                            child: Text(
+                              "Add to Cart",
+                              style: TextStyle(fontSize: 16),
+                            ),
+                          );
                         },
-                        style: ElevatedButton.styleFrom(
-                          primary: Colors.deepOrangeAccent,
-                        ),
-                        child: Text(
-                          "Add to Cart",
-                          style: TextStyle(fontSize: 16),
-                        ),
                       ),
                     ],
                   ),

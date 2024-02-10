@@ -14,7 +14,13 @@ class ProductProvider extends ChangeNotifier {
   List<Product> productList = [];
   List<Product> cartList=[];
   String cartListJson = "";
+  bool isGridView=false;
+  int quantity=1;
 
+  void changeGridview(){
+    isGridView = !isGridView;
+    notifyListeners();
+  }
   void fetchProducts() async {
     var future = await http.get(Uri.parse("https://fakestoreapi.com/products"));
     productList = productFromJson(future.body);
@@ -41,6 +47,7 @@ class ProductProvider extends ChangeNotifier {
   void delete(int index) {
     if (index >= 0 && index < cartList.length) {
       cartList.removeAt(index);
+      saveData();
       notifyListeners();
     } else {
       print("Invalid index: $index");

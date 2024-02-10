@@ -25,21 +25,19 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    // List<Product> productList =
-    //     Provider.of<ProductProvider>(context).productList;
-    // // CONVERT
-    // Map<Category, List<Product>> categoryMap = {};
-    // productList.forEach((product) {
-    //   if (!categoryMap.containsKey(product.category)) {
-    //     categoryMap[product.category!] = [];
-    //   }
-    //   categoryMap[product.category]!.add(product);
-    // });
-
     return Scaffold(
       appBar: AppBar(
         title: Text("HomePage"),
         centerTitle: true,
+        leading: Consumer<ProductProvider>(
+          builder: (BuildContext context, ProductProvider value, Widget? child) {
+            return  IconButton(
+                onPressed: () {
+                  value.changeGridview();
+                },
+                icon: (value.isGridView)?Icon(Icons.list_alt_rounded):Icon(Icons.grid_view));
+          },
+        ),
         actions: [
           IconButton(
               onPressed: () {
@@ -50,30 +48,40 @@ class _MyHomePageState extends State<MyHomePage> {
               icon: Icon(Icons.shopping_cart))
         ],
       ),
-      body: Consumer<ProductProvider>(
-        builder: (BuildContext context, ProductProvider value, Widget? child) {
-          List<Product> productList = value.productList;
-          // CONVERT
-          Map<Category, List<Product>> categoryMap = {};
-          productList.forEach((product) {
-            if (!categoryMap.containsKey(product.category)) {
-              categoryMap[product.category!] = [];
-            }
-            categoryMap[product.category]!.add(product);
-          });
+      body: Stack(
+        children: [
+          Positioned.fill(
+            child: Image.asset(
+              'assets/images/bg2.jpeg', // Replace with your image path
+              fit: BoxFit.cover,
+            ),
+          ),
+          Consumer<ProductProvider>(
+            builder: (BuildContext context, ProductProvider value, Widget? child) {
+              List<Product> productList = value.productList;
+              // CONVERT
+              Map<Category, List<Product>> categoryMap = {};
+              productList.forEach((product) {
+                if (!categoryMap.containsKey(product.category)) {
+                  categoryMap[product.category!] = [];
+                }
+                categoryMap[product.category]!.add(product);
+              });
 
-          return (productList.isEmpty)
-              ? Center(child: CircularProgressIndicator())
-              : SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: categoryMap.entries.map((entry) {
-                      return CategorySection(
-                          title: entry.key, productList: entry.value);
-                    }).toList(),
-                  ),
-                );
-        },
+              return (productList.isEmpty)
+                  ? Center(child: CircularProgressIndicator())
+                  : SingleChildScrollView(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: categoryMap.entries.map((entry) {
+                          return CategorySection(
+                              title: entry.key, productList: entry.value);
+                        }).toList(),
+                      ),
+                    );
+            },
+          ),
+        ],
       ),
     );
   }
@@ -101,63 +109,130 @@ class CategorySection extends StatelessWidget {
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
         ),
-        SizedBox(
-          height: 400, // Adjust the height as needed
-
-          child: GridView.builder(
-            scrollDirection: Axis.horizontal,
-            itemCount: productList.length,
-            itemBuilder: (context, index) {
-              var sample = productList[index];
-              return GestureDetector(
-                onTap: () {
-                  Navigator.push(context, MaterialPageRoute(
-                    builder: (context) {
-                      return DetailsPage(
-                          title: sample.title,
-                          rating: double.parse("${sample.rating!.rate}"),
-                          image: sample.image,
-                          category: "${sample.category}",
-                          price: sample.price,
-                          description: sample.description);
-                    },
-                  ));
-                },
-                child: Container(
-                  width: 150, // Adjust the width as needed
-                  margin: EdgeInsets.symmetric(horizontal: 8),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Image.network(
-                        sample.image!,
-                        height: 100,
-                        width: 150,
-                        fit: BoxFit.contain,
-                      ),
-                      SizedBox(height: 4),
-                      Text(
-                        sample.title!,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      RatingBarIndicator(
-                        rating: double.parse("${sample.rating!.rate}"),
-                        itemBuilder: (context, index) => Icon(
-                          Icons.star,
-                          color: Colors.amber,
-                        ),
-                        itemCount: 5,
-                        itemSize: 15.0,
-                        direction: Axis.horizontal,
-                      ),
-                      Text("\$${sample.price}"),
-                    ],
-                  ),
-                ),
-              );
-            }, gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
-          ),
+        Consumer<ProductProvider>(
+          builder: (context, value, child) {
+            return (value.isGridView)
+                ? SizedBox(
+                    height: 400, // Adjust the height as needed
+                    child: GridView.builder(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: productList.length,
+                      itemBuilder: (context, index) {
+                        var sample = productList[index];
+                        return GestureDetector(
+                          onTap: () {
+                            Navigator.push(context, MaterialPageRoute(
+                              builder: (context) {
+                                return DetailsPage(
+                                    title: sample.title,
+                                    rating:
+                                        double.parse("${sample.rating!.rate}"),
+                                    image: sample.image,
+                                    category: "${sample.category}",
+                                    price: sample.price,
+                                    description: sample.description);
+                              },
+                            ));
+                          },
+                          child: Container(
+                            width: 150, // Adjust the width as needed
+                            margin: EdgeInsets.symmetric(horizontal: 8),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Image.network(
+                                  sample.image!,
+                                  height: 100,
+                                  width: 200,
+                                  fit: BoxFit.contain,
+                                ),
+                                SizedBox(height: 4),
+                                Text(
+                                  sample.title!,
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                                RatingBarIndicator(
+                                  rating:
+                                      double.parse("${sample.rating!.rate}"),
+                                  itemBuilder: (context, index) => Icon(
+                                    Icons.star,
+                                    color: Colors.amber,
+                                  ),
+                                  itemCount: 5,
+                                  itemSize: 15.0,
+                                  direction: Axis.horizontal,
+                                ),
+                                Text("\$${sample.price}"),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2),
+                    ),
+                  )
+                : SizedBox(
+                    height: 200,
+                    child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: productList.length,
+                      itemBuilder: (context, index) {
+                        var sample = productList[index];
+                        return GestureDetector(
+                          onTap: () {
+                            Navigator.push(context, MaterialPageRoute(
+                              builder: (context) {
+                                return DetailsPage(
+                                    title: sample.title,
+                                    rating:
+                                        double.parse("${sample.rating!.rate}"),
+                                    image: sample.image,
+                                    category: "${sample.category}",
+                                    price: sample.price,
+                                    description: sample.description);
+                              },
+                            ));
+                          },
+                          child: Container(
+                            width: 150, // Adjust the width as needed
+                            margin: EdgeInsets.symmetric(horizontal: 8),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Image.network(
+                                  sample.image!,
+                                  height: 100,
+                                  width: 150,
+                                  fit: BoxFit.contain,
+                                ),
+                                SizedBox(height: 4),
+                                Text(
+                                  sample.title!,
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                                RatingBarIndicator(
+                                  rating:
+                                      double.parse("${sample.rating!.rate}"),
+                                  itemBuilder: (context, index) => Icon(
+                                    Icons.star,
+                                    color: Colors.amber,
+                                  ),
+                                  itemCount: 5,
+                                  itemSize: 15.0,
+                                  direction: Axis.horizontal,
+                                ),
+                                Text("\$${sample.price}"),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  );
+          },
         ),
       ],
     );
