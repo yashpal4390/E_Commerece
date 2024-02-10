@@ -1,16 +1,21 @@
-# advanced_exam
+# E Commerce
+# Project Technologies:
+- Dart language
+- Flutter framework with MVC and Provider architecture
+# Project Requirements:
+- Knowledge of programming languages such as Dart and JavaScript.
+- Familiarity with the Flutter framework and JSON parsing.
+- Understanding of user interface design principles and best practices.
+- Experience with mobile app development and related tools like Android Studio or VS Code.
+- Ability to work independently.
+# Project Deliverables:
+- A functional E Commerce application developed using Flutter.
+- Source code and documentation for the application.
+- User manual and installation instructions.
+- Project report detailing the development process, challenges faced, and solutions implemented.
+- Presentation and demonstration of the application to a panel of reviewers.
+# Screen Shorts (ss):
+![Untitled design (2)](https://github.com/yashpal4390/E_Commerece/assets/138545274/340ac161-03ea-44f7-8028-ca4e866f5c73)
+# Screen Recoreding :
+https://drive.google.com/file/d/1aQAIHGfheXBeT5QNoLkRCKUykc_ki8EB/view?usp=sharing
 
-A new Flutter project.
-
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
